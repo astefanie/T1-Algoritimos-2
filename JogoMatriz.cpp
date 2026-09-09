@@ -260,8 +260,6 @@ bool sustentaBloco(int celula, int orientacao){
   return false;
 }
 
-
-
 void desenharCenario(int m[][TAM], int mapaAtual, int orientacao, int movimentos, int rotacoes){
 
   cout << "Mapa: " << mapaAtual << endl;
@@ -310,7 +308,45 @@ void desenharCenario(int m[][TAM], int mapaAtual, int orientacao, int movimentos
             cout << " ";
       }
     }
+    cout << endl;
   }
+}
+
+bool jogadorNaAlavanca(int elementoAbaixo) {
+    if (elementoAbaixo == 4) {
+        return true;
+    }
+
+    return false;
+}
+
+void jogar(int m[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo) {
+    char tecla;
+
+    while(true) {
+
+        cout << "\033c";
+
+        desenharCenario(m, numeroMapa, orientacao, movimentos, rotacoes);
+
+        tecla = getch();
+
+        if (tecla == 27) { // tecla ESC
+            break;
+        }
+
+        if (tecla == 'W' || tecla == 'w' || tecla == 'A' || tecla == 'a' || tecla == 'S' || tecla == 's' || tecla == 'D' || tecla == 'd') {
+
+            moverJogador(m, px, py, elementoAbaixo, orientacao, movimentos, tecla);
+        
+        } else if( tecla == 'q' || tecla == 'Q' || tecla == 'e' || tecla == 'E') {
+            
+            if (jogadorNaAlavanca(elementoAbaixo)) {
+                
+                girarMatriz(m, px, py, elementoAbaixo, orientacao, rotacoes, tecla);
+            }
+        }
+    }
 }
 
 
@@ -320,6 +356,14 @@ int main(){
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
     int option;
+    int m[TAM][TAM];
+    int numeroMapa;
+    int px, py;
+
+    int orientacao = 0, movimentos = 0, rotacoes = 0;
+    int elementoAbaixo = 0;
+
+    char tecla;
 
     do{
         cout << "--- MENU ---" << endl
@@ -337,6 +381,13 @@ int main(){
         switch (option){
 
             case 1:
+            carregarMapa(numeroMapa, m, px, py);
+            orientacao = 0;
+            movimentos = 0;
+            rotacoes = 0;
+            elementoAbaixo = 0;
+            
+            jogar(m, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo);
             break;
 
             case 2:
