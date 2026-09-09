@@ -251,7 +251,13 @@ void esmagamento(int m[][TAM], int &orientacao, int &px, int &py, bool &perdeu){
   }
 }
 bool sustentaBloco(int celula, int orientacao){
-
+  if(celula == 1 or celula == 3){
+    return true;
+  }
+  else if(celula == 7 or celula == 6){
+    return(portaEstaFechada(celula, orientacao));
+  }
+  return false;
 }
 
 
