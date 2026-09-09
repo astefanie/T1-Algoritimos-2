@@ -50,8 +50,6 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int
             blocos[l][c] = 0;
         }
     }
-  cout << "Qual mapa gostaria de jogar? 1, 2 ou 3: " << endl;
-  cin >> numeroMapa;
 
   switch (numeroMapa){
 
@@ -85,8 +83,8 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int
     case 2:{
       int temp[TAM][TAM] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //mapa 2 
                             {1, 2, 4, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
+                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
                             {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
                             {1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1},
                             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -246,19 +244,14 @@ void girarMatriz(int m[][TAM], int blocos[][TAM], int &px, int &py, int &element
   elementoAbaixo = 4;
 }
 
-void esmagamento(int m[][TAM], int &orientacao, int &px, int &py, bool &perdeu){
-  for(int l = 0; l < TAM - 1; l++){
-    for(int c = 0; c < TAM - 1; c++){
+void esmagamento(int m[][TAM], int blocos[][TAM], int orientacao){
+  for(int l = 0; l < TAM; l++){
+    for(int c = 0; c < TAM; c++){
 
-      if(m[l][c] == 6 or m[l][c] == 7){
-        portaEstaFechada(m[l][c], orientacao);
-
-          if(m[l][c] == m[px][py]){
-            perdeu = true;
-          }
-          else{
-            m[l][c] = 0;
-          }
+      if(blocos[l][c] == 1){
+        if((m[l][c]==6 || m[l][c]==7) && portaEstaFechada(m[l][c], orientacao)){
+            blocos[l][c] = 0;
+        }
       }
     }
   }
@@ -267,7 +260,7 @@ bool sustentaBloco(int celula, int orientacao){
   if(celula == 1){
     return true;
   }
-  else if(celula == 7 or celula == 6){
+  else if(celula == 7 || celula == 6){
     return portaEstaFechada(celula, orientacao);
   }
   return false;
@@ -356,6 +349,13 @@ bool jogadorNaAlavanca(int elementoAbaixo) {
     return false;
 }
 
+bool venceu(int elementoAbaixo){
+    if(elementoAbaixo == 5){
+        return true;
+    }
+    return false;
+}
+
 void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo) {
     char tecla;
 
@@ -370,10 +370,30 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
         if (tecla == 27) { // tecla ESC
             break;
         }
+        if (tecla == 'r' || tecla == 'R'){
+            carregarMapa(numeroMapa, m, blocos, px, py);
+            orientacao= 0;
+            movimentos= 0;
+            rotacoes= 0;
+            elementoAbaixo= 0;
+
+            continue;
+        }
 
         if (tecla == 'W' || tecla == 'w' || tecla == 'A' || tecla == 'a' || tecla == 'S' || tecla == 's' || tecla == 'D' || tecla == 'd') {
 
             moverJogador(m, blocos, px, py, elementoAbaixo, orientacao, movimentos, tecla);
+
+            if(venceu(elementoAbaixo)){
+                cout << "\033c";
+                
+                desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes);
+
+            cout << endl << "====Você venceu!====\n";
+
+            getch();
+            break;
+           }
         
         } else if( tecla == 'q' || tecla == 'Q' || tecla == 'e' || tecla == 'E') {
             
@@ -420,7 +440,11 @@ int main(){
         switch (option){
 
             case 1:
+            cout << "Qual mapa gostaria de jogar? 1, 2 ou 3: " << endl;
+            cin >> numeroMapa;
+
             carregarMapa(numeroMapa, m, blocos, px, py);
+            
             orientacao = 0;
             movimentos = 0;
             rotacoes = 0;
