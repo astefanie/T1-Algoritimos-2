@@ -54,7 +54,7 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int &px, int &py){
     case 1:{
       int temp[TAM][TAM] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //mapa 1
                             {1, 2, 4, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 1},
+                            {1, 0, 0, 3, 0, 3, 0, 0, 0, 0, 1},
                             {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
                             {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
                             {1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1},
@@ -277,37 +277,6 @@ bool sustentaBloco(int celula, int orientacao){
   return false;
 }
 
-void gravidade(int m[][TAM], int orientacao){
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
-
-      if(m[l][c] == 3){
-        int proxL = l;
-        int proxC = c;
-
-        if(orientacao == 0 ){
-          proxL = l + 1;
-        }
-        else if(orientacao == 90){
-          proxC = c - 1;
-        }
-        else if(orientacao == 180){
-          proxL = l - 1;
-        }
-        else if(orientacao == 270){
-          proxC = c + 1;
-        }
-
-        if(proxL >= 0 and proxL < TAM and proxC >= 0 and proxC < TAM){ //conferir se a posição esta dentro da matriz
-          if sustentaBloco
-      }
-    }
-  }
-
-}
-}
-
-
 
 void desenharCenario(int m[][TAM], int mapaAtual, int orientacao, int movimentos, int rotacoes){
 
@@ -402,9 +371,9 @@ int main(){
                   jogando = false;
                 }
 
-                else if(tecla == 'w' or tecla == 'W' ||
-                        tecla == 'a' or tecla == 'A' ||
-                        tecla == 's' or tecla == 'S' ||
+                else if(tecla == 'w' or tecla == 'W' or
+                        tecla == 'a' or tecla == 'A' or
+                        tecla == 's' or tecla == 'S' or
                         tecla == 'd' or tecla == 'D'){
                   moverJogador(m, px, py, elementoAbaixo, orientacao, movimentos, tecla);  
               }
