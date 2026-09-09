@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 #include <conio.h> 
 #include <windows.h>
 #define TAM 11
@@ -45,7 +46,7 @@ void CorNormal() {
 
 void carregarMapa(int &numeroMapa, int m[][TAM], int &px, int &py){
 
-  cout << "Qual mapa gostaria de jogar? 1, 2 ou 3: " << endl;
+  cout << "Qual mapa gostaria de jogar? 1, 2, 3 ou 4 para aleatório: " << endl;
   cin >> numeroMapa;
 
   switch (numeroMapa){
@@ -118,6 +119,10 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int &px, int &py){
       py = 1;
       break;
       }
+
+      case 4:{
+        numeroMapa = rand() % 3 + 1;
+      }
     }  
 }
 
@@ -156,9 +161,11 @@ bool daPraPassar(int celula, int orientacao){ //confere se os espaços da matriz
   return false;
 }
 
+
 void moverJogador(int m[][TAM], int &px, int &py, int &elementoAbaixo, int orientacao, int &movimentos, char tecla){
   int proxX = px;
   int proxY = py;
+  bool movimentoValido = false; 
 
   switch (tecla){ //switch que faz o jogador poder se mover
 
@@ -183,13 +190,23 @@ void moverJogador(int m[][TAM], int &px, int &py, int &elementoAbaixo, int orien
       break;
     }
   }
-  if(daPraPassar(m[proxX][proxY], orientacao)){
-    m[px][py] = elementoAbaixo; //devolve o chão antigo
-    px = proxX; //atualiza as coordenadas
-    py = proxY; //atualiza as coordenadas
-    elementoAbaixo = m[px][py]; //guarda o novo chão
-    m[px][py] = 2; //coloca o jogador na nova posição
-    movimentos++; //soma um movimento 
+
+  if(proxX >= 0 and proxX < TAM and proxY >= 0 and proxY < TAM){
+    movimentoValido = true;
+  }
+
+  
+
+  if(movimentoValido == true){
+    if(daPraPassar(m[proxX][proxY], orientacao)){
+      
+      m[px][py] = elementoAbaixo; //devolve o chão antigo
+      elementoAbaixo = m[proxX][proxY]; //guarda o que existe na proxima posição
+      px = proxX; //atualiza as coordenadas
+      py = proxY; //atualiza as coordenadas
+      m[px][py] = 2; //coloca o jogador na nova posição
+      movimentos++; //soma um movimento 
+      }
     }
 }
 void localizarJogador(int m[][TAM], int &px, int &py){
@@ -251,13 +268,43 @@ void esmagamento(int m[][TAM], int &orientacao, int &px, int &py, bool &perdeu){
   }
 }
 bool sustentaBloco(int celula, int orientacao){
-  if(celula == 1 or celula == 3){
+  if(celula == 1 or celula == 3){  //confere se 
     return true;
   }
   else if(celula == 7 or celula == 6){
     return(portaEstaFechada(celula, orientacao));
   }
   return false;
+}
+
+void gravidade(int m[][TAM], int orientacao){
+  for(int l = 0; l < TAM; l++){
+    for(int c = 0; c < TAM; c++){
+
+      if(m[l][c] == 3){
+        int proxL = l;
+        int proxC = c;
+
+        if(orientacao == 0 ){
+          proxL = l + 1;
+        }
+        else if(orientacao == 90){
+          proxC = c - 1;
+        }
+        else if(orientacao == 180){
+          proxL = l - 1;
+        }
+        else if(orientacao == 270){
+          proxC = c + 1;
+        }
+
+        if(proxL >= 0 and proxL < TAM and proxC >= 0 and proxC < TAM){ //conferir se a posição esta dentro da matriz
+          if sustentaBloco
+      }
+    }
+  }
+
+}
 }
 
 
@@ -310,6 +357,7 @@ void desenharCenario(int m[][TAM], int mapaAtual, int orientacao, int movimentos
             cout << " ";
       }
     }
+    cout << endl;
   }
 }
 
@@ -319,6 +367,9 @@ void desenharCenario(int m[][TAM], int mapaAtual, int orientacao, int movimentos
 int main(){
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
+
+    srand(time(NULL));
+
     int option;
 
     do{
@@ -336,9 +387,37 @@ int main(){
 
         switch (option){
 
-            case 1:
-            break;
+            case 1:{
+              int m[TAM][TAM], numeroMapa, px, py, orientacao = 0, movimentos = 0, rotacoes = 0, elementoAbaixo = 0;
+              bool jogando = true;
 
+              carregarMapa(numeroMapa, m, px, py);
+
+              while (jogando){
+                desenharCenario(m, numeroMapa, orientacao, movimentos, rotacoes);
+                char tecla;
+                tecla = getch();
+
+                if(tecla == 27){
+                  jogando = false;
+                }
+
+                else if(tecla == 'w' or tecla == 'W' ||
+                        tecla == 'a' or tecla == 'A' ||
+                        tecla == 's' or tecla == 'S' ||
+                        tecla == 'd' or tecla == 'D'){
+                  moverJogador(m, px, py, elementoAbaixo, orientacao, movimentos, tecla);  
+              }
+              else if(tecla == 'q' or tecla == 'Q' ||
+                      tecla == 'e' or tecla == 'E'){
+                if(elementoAbaixo == 4){
+                  girarMatriz(m, px, py, elementoAbaixo, orientacao, rotacoes, tecla);
+                }
+               }
+
+              }
+              break;
+          }
             case 2:
             break;
 
