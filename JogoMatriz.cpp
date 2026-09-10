@@ -356,7 +356,7 @@ bool venceu(int elementoAbaixo){
     return false;
 }
 
-void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo) {
+void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo, bool &jogoSalvo) {
     char tecla;
 
     while(true) {
@@ -368,6 +368,7 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
         tecla = getch();
 
         if (tecla == 27) { // tecla ESC
+          jogoSalvo = true;
             break;
         }
         if (tecla == 'r' || tecla == 'R'){
@@ -418,6 +419,7 @@ int main(){
     int blocos[TAM][TAM];
     int numeroMapa;
     int px, py;
+    bool jogoSalvo = false;
 
     int orientacao = 0, movimentos = 0, rotacoes = 0;
     int elementoAbaixo = 0;
@@ -450,10 +452,16 @@ int main(){
             rotacoes = 0;
             elementoAbaixo = 0;
             
-            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo);
+            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
             break;
 
             case 2:
+              if(jogoSalvo){
+                jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
+              }
+              else{
+                cout << "Nenhuma partida salva!" << endl;
+              }
             break;
 
             case 3:
