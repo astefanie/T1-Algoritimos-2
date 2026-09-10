@@ -1,1 +1,8 @@
+<<<<<<< HEAD
 .exe
+=======
+# Arquivos de compilação
+a.out
+*.o
+*.exe
+>>>>>>> v2.67
