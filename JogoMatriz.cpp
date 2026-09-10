@@ -44,7 +44,7 @@ void CorNormal() { //função para voltar a cor normal
 
 
 
-void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int &py){ //função responsavel por carregar os mapas 
+void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int &py){
 
     for (int l =0; l<TAM; l++){
         for(int c = 0; c<TAM; c++){
@@ -55,9 +55,9 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
   switch (numeroMapa){
 
     case 1:{
-      int temp[TAM][TAM] = { // mapa 1
+      int temp[TAM][TAM] = {
     {1,1,1,1,1,1,1,1,1,1,1},
-    {1,2,4,0,0,1,0,0,0,0,1},
+    {1,0,4,0,0,1,0,0,0,0,1},
     {1,0,1,1,0,1,0,1,1,0,1},
     {1,0,0,1,0,0,0,1,0,0,1},
     {1,1,0,1,1,1,0,1,0,1,1},
@@ -75,7 +75,7 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
         }
       }
 
-      blocos[3][5] = 1; //coordenadas nos blocos presentes na matriz do mapa 1
+      blocos[3][5] = 1;
       blocos[5][7] = 1;
       blocos[7][6] = 1;
 
@@ -85,7 +85,7 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
       }
 
     case 2:{
-      int temp[TAM][TAM] = { //mapa 2
+      int temp[TAM][TAM] = {
     {1,1,1,1,1,1,1,1,1,1,1},
     {1,0,0,0,1,0,0,0,5,1,1},
     {1,0,1,0,1,0,1,0,0,0,1},
@@ -95,7 +95,7 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
     {1,1,1,0,1,1,1,0,1,0,1},
     {1,0,0,0,1,0,0,0,0,0,1},
     {1,0,1,0,1,0,1,1,1,0,1},
-    {1,2,4,0,0,0,0,0,0,0,1},
+    {1,0,4,0,0,0,0,0,0,0,1},
     {1,1,1,1,1,1,1,1,1,1,1}
 };
 
@@ -105,7 +105,7 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
         }
       }
 
-      blocos[7][5] = 1; //coordenadas nos blocos presentes na matriz do mapa 2
+      blocos[9][5] = 1;
       blocos[5][6] = 1;
 
       px = 9; //jogador no mapa 2
@@ -114,9 +114,9 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
       }
 
     case 3:{
-      int temp[TAM][TAM] = { //mapa 3
+      int temp[TAM][TAM] = {
     {1,1,1,1,1,1,1,1,1,1,1},
-    {1,2,4,0,0,1,0,0,0,0,1},
+    {1,0,4,0,0,1,0,0,0,0,1},
     {1,0,1,1,0,1,0,1,1,0,1},
     {1,0,0,1,0,0,0,1,0,0,1},
     {1,1,0,1,1,6,0,1,0,1,1},
@@ -134,10 +134,10 @@ void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int 
         }
       }
 
-      blocos[2][6] = 1; //coordenadas nos blocos presentes na matriz do mapa 3
+      blocos[3][6] = 1;
       blocos[4][6] = 1;
-      blocos[6][4] = 1;
-      blocos[8][8] = 1;
+      blocos[9][4] = 1;
+      blocos[9][8] = 1;
 
       px = 1; // jogador no mapa 3
       py = 1;
@@ -172,7 +172,7 @@ bool daPraPassar(int celula, int orientacao){ //confere se os espaços da matriz
   if(celula == 0 or celula == 4 or celula == 5){ 
     return true;
     }
-  else if(celula == 1 or celula == 3){
+  else if(celula == 1){
     return false;
   }
   else if(celula == 6 or celula == 7){
@@ -185,8 +185,8 @@ bool daPraPassar(int celula, int orientacao){ //confere se os espaços da matriz
   return false;
 }
 
-void moverJogador(int m[][TAM], int blocos[][TAM], int &px, int &py, int &elementoAbaixo, int orientacao, int &movimentos, char tecla){ //move o jogador dentro da matriz 
-  int proxX = px; //variaveis auxiliares
+void moverJogador(int m[][TAM], int blocos[][TAM], int &px, int &py, int orientacao, int &movimentos, char tecla){
+  int proxX = px;
   int proxY = py;
 
   switch (tecla){ //switch que faz o jogador poder se mover
@@ -212,29 +212,17 @@ void moverJogador(int m[][TAM], int blocos[][TAM], int &px, int &py, int &elemen
       break;
     }
   }
-  if(blocos[proxX][proxY] == 0 && daPraPassar(m[proxX][proxY], orientacao)){ 
-    m[px][py] = elementoAbaixo; //devolve o chão antigo
+  if(blocos[proxX][proxY] == 0 && daPraPassar(m[proxX][proxY], orientacao)){
     px = proxX; //atualiza as coordenadas
     py = proxY; //atualiza as coordenadas
-    elementoAbaixo = m[px][py]; //guarda o novo chão
-    m[px][py] = 2; //coloca o jogador na nova posição
     movimentos++; //soma um movimento 
     }
 }
-void localizarJogador(int m[][TAM], int &px, int &py){
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
-      if(m[l][c] == 2){ //para encontar o jogador
-        px = l;
-        py = c;
-        return;
-      }
-    }
-  }
-}
 
-void girarMatriz(int m[][TAM], int blocos[][TAM], int &px, int &py, int &elementoAbaixo, int &orientacao, int &rotacoes, char tecla){
-  int aux[TAM][TAM]; //matrizes auxiliares usadas para armazenar temporariamente
+void girarMatriz(int m[][TAM], int blocos[][TAM], int &px, int &py, int &orientacao, int &rotacoes, char tecla){
+  int novoPx;
+  int novoPy;
+  int aux[TAM][TAM];
   int auxBlocos[TAM][TAM];
   
   for(int l = 0; l < TAM; l++){
@@ -256,15 +244,19 @@ void girarMatriz(int m[][TAM], int blocos[][TAM], int &px, int &py, int &element
     }
   }
   if(tecla == 'e' or tecla == 'E'){
-    orientacao = (orientacao + 90) % 360; //atualiza a orientação em graus da matriz 
-  }
+    novoPx = py; //atualiza a orientação em graus da matriz 
+    novoPy = TAM - 1 - px;
+    orientacao = (orientacao + 90) % 360;
+  } 
   else if(tecla == 'q' or tecla == 'Q'){
-    orientacao = (orientacao - 90 + 360) % 360; //atualiza a orientação em graus da matriz, o +360 evita que o codigo seja negativo
+    novoPx = TAM - 1 - py; //atualiza a orientação em graus da matriz
+    novoPy = px;
+    orientacao = (orientacao - 90 + 360) % 360;
   }
-  rotacoes++; //aumenta a contagem de rotações
-  localizarJogador(m, px, py); //apos as rotações procura novamente a posição do jogador
-  elementoAbaixo = 4; //define o a alavanca como 4 
-}
+    px = novoPx;
+    py = novoPy;
+    rotacoes++; //aumenta a contagem de rotações
+  }
 
 void esmagamento(int m[][TAM], int blocos[][TAM], int orientacao){
   for(int l = 0; l < TAM; l++){
@@ -288,16 +280,16 @@ bool sustentaBloco(int celula, int orientacao){
   return false;
 }
 
-void gravidade(int m[][TAM], int blocos[][TAM], int orientacao){
+void gravidade(int m[][TAM], int blocos[][TAM], int orientacao, int px, int py){
 
     for (int l= TAM-2; l>= 0; l--){ //percorre as linhas de baixo para cima 
         for (int c = 0; c < TAM; c++){
             if(blocos[l][c] == 1){ //verifica se tem bloco
                 int linha = l; //guarda linha do bloco
 
-                while(linha + 1 < TAM && blocos[linha + 1][c] == 0 && sustentaBloco(m[linha + 1][c], orientacao) == false) { //continua movimentando para baixo
-                    blocos[linha][c] = 0; //remove o bloco da posição atual
-                    blocos[linha + 1][c] = 1; //coloca o bloco uma linha abaixo
+                while(linha + 1 < TAM && blocos[linha + 1][c] == 0 && !(linha + 1 == px && c == py) && sustentaBloco(m[linha + 1][c], orientacao) == false) {
+                    blocos[linha][c] = 0;
+                    blocos[linha + 1][c] = 1;
 
                     linha ++;
                 }
@@ -306,7 +298,15 @@ void gravidade(int m[][TAM], int blocos[][TAM], int orientacao){
     }
 }
 
-void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orientacao, int movimentos, int rotacoes){
+char jogadorAlavanca(int m[][TAM], int px, int py){
+    
+    if(m[px][py] == 4){
+        return 'T';
+    }
+    return '@';
+}
+
+void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orientacao, int movimentos, int rotacoes, int px, int py){
 
   cout << "Mapa: " << mapaAtual << endl;
   cout << "Orientação: " << orientacao << endl;
@@ -316,9 +316,11 @@ void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orienta
   for(int l = 0; l < TAM; l++){
     for(int c = 0; c < TAM; c++){
         
-        if(blocos[l][c] == 1){ //verifica se tem bloco
-            cout << "O";
-        } else {
+        if(l == px && c == py){
+            cout << jogadorAlavanca(m, px, py) << " ";
+        } else if(blocos[l][c] == 1){
+            cout << "O ";
+        } else{
       switch (m[l][c]) {
         case 0:
           cout << "  ";
@@ -327,9 +329,6 @@ void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orienta
           FundoAzul();
           cout << "  ";
           CorNormal();
-          break;
-        case 2:
-          cout << "@ ";
           break;
         case 3:
           cout << "O ";
@@ -363,40 +362,38 @@ void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orienta
   }
 }
 
-bool jogadorNaAlavanca(int elementoAbaixo) {
-    if (elementoAbaixo == 4) {
+bool jogadorNaAlavanca(int m[][TAM], int px, int py) {
+    if (m[px][py] == 4) {
         return true;
     }
 
     return false;
 }
 
-bool venceu(int elementoAbaixo){
-    if(elementoAbaixo == 5){
+bool venceu(int m[][TAM], int px, int py){
+    if(m[px][py] == 5){
         return true;
     }
     return false;
 }
 
-bool jogadorEsmagado(int elementoAbaixo, int orientacao) {
+bool jogadorEsmagado(int m[][TAM], int px, int py, int orientacao) {
 
-    if (elementoAbaixo == 7 || elementoAbaixo == 6) {
-
-        if(portaEstaFechada(elementoAbaixo, orientacao)) {
+    if ((m[px][py] == 7 || m[px][py] == 6) && portaEstaFechada(m[px][py], orientacao)){
             return true;
-        }
     }
+
     return false;
 }
 
-void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo, bool &jogoSalvo) {
+void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, bool &jogoSalvo) {
     char tecla;
 
     while(true) {
 
         cout << "\033c";
 
-        desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes);
+        desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes, px, py);
 
         tecla = getch();
 
@@ -410,19 +407,20 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
             orientacao= 0;
             movimentos= 0;
             rotacoes= 0;
-            elementoAbaixo= 0;
 
             continue;
         }
 
         if (tecla == 'W' || tecla == 'w' || tecla == 'A' || tecla == 'a' || tecla == 'S' || tecla == 's' || tecla == 'D' || tecla == 'd') {
 
-            moverJogador(m, blocos, px, py, elementoAbaixo, orientacao, movimentos, tecla);
+            moverJogador(m, blocos, px, py, orientacao, movimentos, tecla);
 
-            if(venceu(elementoAbaixo)){
-                
-                desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes);
+            if(venceu(m, px,py)){
+                jogoSalvo = false;
+
                 cout << "\033c";
+                
+                desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes, px, py);
 
             cout << "\n====Você venceu!====\n";
 
@@ -432,31 +430,72 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
         
         } else if( tecla == 'q' || tecla == 'Q' || tecla == 'e' || tecla == 'E') {
             
-            if (jogadorNaAlavanca(elementoAbaixo)) {
+            if (jogadorNaAlavanca(m, px, py)) {
                 
-                girarMatriz(m, blocos, px, py, elementoAbaixo, orientacao, rotacoes, tecla);
+                girarMatriz(m, blocos, px, py, orientacao, rotacoes, tecla);
+
+                if(jogadorEsmagado(m, px, py, orientacao)){
+
+                    cout << "\033c";
+                    cout << "==== Você foi esmagado pela porta! ====\n";
+            
+                    getch();
+
+                    carregarMapa(numeroMapa, m, blocos, px, py);
+                    orientacao = 0;
+                    movimentos = 0;
+                    rotacoes = 0;
+                    
+                    continue;
+                }
 
                 esmagamento(m, blocos, orientacao);
                 
-                gravidade(m, blocos, orientacao);
-
-                if(blocos[px][py] == 1){
-                  cout << "\033c";
-                  cout << "DERROTA! O jogador for esmagado por um bloco!" << endl;
-
-                  cin.ignore();
-                  cin.ignore();
-                  cout<<"\033c";
-
-                  break;
-                }
-               
+                gravidade(m, blocos, orientacao, px, py);
             }
         }
     }
 }
 
+int escolherMapa(){
+    int opcao;
+    int mapa;
 
+    cout << "1 - Escolher mapa\n";
+    cout << "2 - Mapa aleatório\n"; 
+    cout << "Escolha uma opção: ";
+    cin >> opcao;
+
+    if(opcao ==1){
+        cout << "Escolher o mapa 1, 2 ou 3: ";
+        cin >> mapa;
+
+        while(mapa <1 || mapa >3){
+            cout << "Mapa inválido. Escolha 1, 2 ou 3: ";
+            cin >> mapa;
+        }
+        return mapa;
+    }else if(opcao == 2){
+        mapa = rand() % 3 + 1;
+
+        return mapa;
+    }
+
+    return 1;
+}
+
+void menu(bool jogoSalvo){
+    cout << "--- MENU ---" << endl
+         << "1 - Novo Jogo " << endl;
+
+    if(jogoSalvo){
+         cout << "2 - Continuar " << endl;
+    }
+         
+    cout << "3 - Sobre " << endl 
+         << "4 - Fim " << endl
+         << "Escolha uma opção: ";
+}
 
 
 int main(){
@@ -471,44 +510,35 @@ int main(){
     bool jogoSalvo = false;
 
     int orientacao = 0, movimentos = 0, rotacoes = 0;
-    int elementoAbaixo = 0;
 
-    char tecla;
     EscondeCursor();
     
 
     do{
-        cout << "--- MENU ---" << endl
-             << "1 - Novo Jogo " << endl
-             << "2 - Continuar " << endl
-             << "3 - Sobre " << endl 
-             << "4 - Fim " << endl;
-             cout << "Escolha uma opção: " << endl;
-             cin >> option;
+        menu(jogoSalvo);
+        
+        cin >> option;
 
-             cout<<"\033c";
-
-         
+        cout<<"\033c";
 
         switch (option){
 
             case 1:
-            cout << "Qual mapa gostaria de jogar? 1, 2, 3 ou 4 para aleatorio: " << endl;
-            cin >> numeroMapa;
+            numeroMapa = escolherMapa();
 
             carregarMapa(numeroMapa, m, blocos, px, py);
             
             orientacao = 0;
             movimentos = 0;
             rotacoes = 0;
-            elementoAbaixo = 0;
+            jogoSalvo = false;
             
-            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
+            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, jogoSalvo);
             break;
 
             case 2:
               if(jogoSalvo){
-                jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
+                jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, jogoSalvo);
               }
             break;
 
@@ -525,8 +555,6 @@ int main(){
 
             default:
                 cout << "Opção invalida! ";
-
-
     }
-    }while (option != 4); 
+    }while (option != 4);
 }
