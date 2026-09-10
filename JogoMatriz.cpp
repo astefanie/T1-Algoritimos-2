@@ -1,6 +1,7 @@
 #include <iostream>
 #include <conio.h> 
 #include <windows.h>
+#include <time.h>
 #define TAM 11
 using namespace std;
 
@@ -43,7 +44,7 @@ void CorNormal() {
 
 
 
-void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int &py){
+void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int &py){
 
     for (int l =0; l<TAM; l++){
         for(int c = 0; c<TAM; c++){
@@ -54,17 +55,19 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int
   switch (numeroMapa){
 
     case 1:{
-      int temp[TAM][TAM] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //mapa 1
-                            {1, 2, 4, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
-                            {1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1},
-                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+      int temp[TAM][TAM] = {
+    {1,1,1,1,1,1,1,1,1,1,1},
+    {1,2,4,0,0,1,0,0,0,0,1},
+    {1,0,1,1,0,1,0,1,1,0,1},
+    {1,0,0,1,0,0,0,1,0,0,1},
+    {1,1,0,1,1,1,0,1,0,1,1},
+    {1,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,1,1,1,1,1,1,0,1},
+    {1,0,0,0,0,0,0,0,1,0,1},
+    {1,1,1,1,1,1,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,0,5,1},
+    {1,1,1,1,1,1,1,1,1,1,1}
+};
   
       for(int l = 0; l < TAM; l++){
         for(int c = 0; c < TAM; c++){
@@ -72,8 +75,9 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int
         }
       }
 
-      blocos[2][5] = 1;
-      blocos[9][7] = 1;
+      blocos[3][5] = 1;
+      blocos[5][7] = 1;
+      blocos[7][6] = 1;
 
       px = 1; //jogador no mapa 1
       py = 1;
@@ -81,46 +85,60 @@ void carregarMapa(int &numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int
       }
 
     case 2:{
-      int temp[TAM][TAM] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //mapa 2 
-                            {1, 2, 4, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 1, 1, 1, 1, 6, 1, 1, 1, 1, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1},
-                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+      int temp[TAM][TAM] = {
+    {1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,1,0,0,0,5,1,1},
+    {1,0,1,0,1,0,1,0,0,0,1},
+    {1,0,1,0,0,0,1,0,1,0,1},
+    {1,0,1,1,6,1,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,1,0,1},
+    {1,1,1,0,1,1,1,0,1,0,1},
+    {1,0,0,0,1,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,1,0,1},
+    {1,2,4,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1}
+};
 
       for(int l = 0; l < TAM; l++){
         for(int c = 0; c < TAM; c++){
           m[l][c] = temp[l][c]; //colocando o mapa "temporario" no do jogo
         }
       }
-      px = 1; //jogador no mapa 2
+
+      blocos[7][5] = 1;
+      blocos[5][6] = 1;
+
+      px = 9; //jogador no mapa 2
       py = 1;
       break;
       }
 
     case 3:{
-      int temp[TAM][TAM] = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, //mapa 3
-                            {1, 2, 4, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1},
-                            {1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1},
-                            {1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 1, 4, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 7, 0, 0, 1},
-                            {1, 0, 0, 0, 0, 0, 0, 1, 0, 5, 1},
-                            {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
+      int temp[TAM][TAM] = {
+    {1,1,1,1,1,1,1,1,1,1,1},
+    {1,2,4,0,0,1,0,0,0,0,1},
+    {1,0,1,1,0,1,0,1,1,0,1},
+    {1,0,0,1,0,0,0,1,0,0,1},
+    {1,1,0,1,1,6,0,1,0,1,1},
+    {1,0,0,0,0,1,1,1,0,0,1},
+    {1,0,1,1,0,0,0,0,0,0,1},
+    {1,0,0,0,0,1,1,1,4,0,1},
+    {1,1,1,1,0,0,0,7,0,0,1},
+    {1,0,0,0,0,0,0,1,0,5,1},
+    {1,1,1,1,1,1,1,1,1,1,1}
+};
 
       for(int l = 0; l < TAM; l++){ 
         for(int c = 0; c < TAM; c++){
           m[l][c] = temp[l][c]; //colocando o mapa "temporario" no do jogo
         }
       }
+
+      blocos[2][6] = 1;
+      blocos[4][6] = 1;
+      blocos[6][4] = 1;
+      blocos[8][8] = 1;
+
       px = 1; // jogador no mapa 3
       py = 1;
       break;
@@ -299,41 +317,41 @@ void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orienta
         } else {
       switch (m[l][c]) {
         case 0:
-          cout << " ";
+          cout << "  ";
           break;
         case 1:
           FundoAzul();
-          cout << " ";
+          cout << "  ";
           CorNormal();
           break;
         case 2:
-          cout << "@";
+          cout << "@ ";
           break;
         case 3:
-          cout << "O";
+          cout << "O ";
           break;
         case 4:
-          cout << "A";
+          cout << "A ";
           break;
         case 5:
-          cout << "S";
+          cout << "S ";
           break;
         case 6:
           if(portaEstaFechada(6, orientacao) == true){
-            cout << "=";
+            cout << "= ";
           }else{
-            cout << ":";
+            cout << ": ";
           }
           break;
         case 7:
           if(portaEstaFechada(7, orientacao) == true){
-            cout << "|";
+            cout << "| ";
           }else{
-            cout << ";";
+            cout << "; ";
           }
           break;
           default:
-            cout << " ";
+            cout << "  ";
       }
      }
     }
@@ -356,7 +374,18 @@ bool venceu(int elementoAbaixo){
     return false;
 }
 
-void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo) {
+bool jogadorEsmagado(int elementoAbaixo, int orientacao) {
+
+    if (elementoAbaixo == 7 || elementoAbaixo == 6) {
+
+        if(portaEstaFechada(elementoAbaixo, orientacao)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, int &elementoAbaixo, bool &jogoSalvo) {
     char tecla;
 
     while(true) {
@@ -368,7 +397,9 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
         tecla = getch();
 
         if (tecla == 27) { // tecla ESC
-            break;
+          jogoSalvo = true;
+          cout<<"\033c";
+          break;
         }
         if (tecla == 'r' || tecla == 'R'){
             carregarMapa(numeroMapa, m, blocos, px, py);
@@ -389,7 +420,7 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
                 
                 desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes);
 
-            cout << endl << "====Você venceu!====\n";
+            cout << "\n====Você venceu!====\n";
 
             getch();
             break;
@@ -401,10 +432,39 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
                 
                 girarMatriz(m, blocos, px, py, elementoAbaixo, orientacao, rotacoes, tecla);
 
+                esmagamento(m, blocos, orientacao);
+                
                 gravidade(m, blocos, orientacao);
             }
         }
     }
+}
+
+int escolherMapa(){
+    int opcao;
+    int mapa;
+
+    cout << "1 - Escolher mapa\n";
+    cout << "2 - Mapa aleatório\n"; 
+    cout << "Escolha uma opção: ";
+    cin >> opcao;
+
+    if(opcao ==1){
+        cout << "Escolher o mapa 1, 2 ou 3: ";
+        cin >> mapa;
+
+        while(mapa <1 || mapa >3){
+            cout << "Mapa inválido. Escolha 1, 2 ou 3: ";
+            cin >> mapa;
+        }
+        return mapa;
+    }else if(opcao == 2){
+        mapa = rand() % 3 + 1;
+
+        return mapa;
+    }
+
+    return 1;
 }
 
 
@@ -413,16 +473,20 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
 int main(){
     SetConsoleCP(65001);
     SetConsoleOutputCP(65001);
+    srand(time(NULL));
     int option;
     int m[TAM][TAM];
     int blocos[TAM][TAM];
     int numeroMapa;
     int px, py;
+    bool jogoSalvo = false;
 
     int orientacao = 0, movimentos = 0, rotacoes = 0;
     int elementoAbaixo = 0;
 
     char tecla;
+    EscondeCursor();
+    
 
     do{
         cout << "--- MENU ---" << endl
@@ -440,8 +504,7 @@ int main(){
         switch (option){
 
             case 1:
-            cout << "Qual mapa gostaria de jogar? 1, 2 ou 3: " << endl;
-            cin >> numeroMapa;
+            numeroMapa = escolherMapa();
 
             carregarMapa(numeroMapa, m, blocos, px, py);
             
@@ -450,10 +513,13 @@ int main(){
             rotacoes = 0;
             elementoAbaixo = 0;
             
-            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo);
+            jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
             break;
 
             case 2:
+              if(jogoSalvo){
+                jogar(m, blocos, numeroMapa, px, py, orientacao, movimentos, rotacoes, elementoAbaixo, jogoSalvo);
+              }
             break;
 
             case 3:
@@ -469,8 +535,6 @@ int main(){
 
             default:
                 cout << "Opção invalida! ";
-
-
     }
-    }while (option != 4); 
+    }while (option != 4);
 }
