@@ -2,13 +2,38 @@
 #include <conio.h> 
 #include <windows.h>
 #include <time.h>
-#define TAM 11
+#include <fstream>
+#include <sstream>
+
 using namespace std;
 
 int getch(void) {
   return _getch();
   }
 
+const int TAM = 21;
+
+struct posicao{ 
+  int lin;
+  int col;
+};
+
+struct jogo{ 
+  int cenario[TAM][TAM];
+  int blocos[TAM][TAM];
+
+  int n;
+  int orientacao;
+
+  posicao jogador;
+
+  int movimentos;
+  int rotacoes;
+
+  int numeroMapa;
+
+  string titulo;
+};
 
 void sobre(){ // Função do menu.
     cout << "Equipe de desenvolvimento: " << endl
@@ -44,123 +69,106 @@ void CorNormal() {
 
 
 
-void carregarMapa(int numeroMapa, int m[][TAM], int blocos[][TAM], int &px, int &py){
+bool carregarMapa(int numeroMapa, jogo &j, string &motivo){
 
-    for (int l =0; l<TAM; l++){
-        for(int c = 0; c<TAM; c++){
-            blocos[l][c] = 0;
-        }
+  string nomeArquivo = "mapa" + to_string(numeroMapa) + ".csv";
+
+  ifstream arquivo(nomeArquivo);
+
+  if(!arquivo.is_open()){
+    motivo = "Arquivo não encontrado.";
+    return false;
+  }
+
+  string linha;
+
+  if(!getline(arquivo, linha)){
+    motivo = "Dimensão ausente.";
+    return false;
+  }
+
+  j.n = stoi(linha);
+
+  if(j.n < 11 || j.n > TAM){
+    motivo = "Dimensão fora do intervalo permitido.";
+    return false;
+  }
+
+  if(!getline(arquivo, j.titulo)){
+    motivo = "Titulo ausente.";
+    return false;
+  }
+
+  for(int l = 0; l < TAM; l++){
+    for(int c = 0; c < TAM; c++){
+        j.blocos[l][c] = 0;
+    }
+  }
+
+  for(int l = 0; l < j.n; l++){
+
+    if(!getline(arquivo, linha)){
+      motivo = "Quantidade de linhas menor que a dimensão.";
+      return false;
     }
 
-  switch (numeroMapa){
+    stringstream ss(linha);
 
-    case 1:{
-      int temp[TAM][TAM] = {
-    {1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,4,0,0,1,0,0,0,0,1},
-    {1,0,1,1,0,1,0,1,1,0,1},
-    {1,0,0,1,0,0,0,1,0,0,1},
-    {1,1,0,1,1,1,0,1,0,1,1},
-    {1,0,0,0,0,0,0,0,0,0,1},
-    {1,0,1,1,1,1,1,1,1,0,1},
-    {1,0,0,0,0,0,0,0,1,0,1},
-    {1,1,1,1,1,1,1,0,1,0,1},
-    {1,0,0,0,0,0,0,0,0,5,1},
-    {1,1,1,1,1,1,1,1,1,1,1}
-};
-  
-      for(int l = 0; l < TAM; l++){
-        for(int c = 0; c < TAM; c++){
-          m[l][c] = temp[l][c]; //colocando o mapa "temporario" no do jogo
-        }
+    for(int c = 0; c < j.n; c++){
+
+      string valorTexto;
+
+      if(!getline(ss, valorTexto, ',')){
+        motivo = "Quantidade de colunas incorreta.";
+        return false;
       }
 
-      blocos[3][5] = 1;
-      blocos[5][7] = 1;
-      blocos[7][6] = 1;
+      int valor = stoi (valorTexto);
 
-      px = 1; //jogador no mapa 1
-      py = 1;
-      break;
+      if(valor == 2){
+
+        j.jogador.lin = l;
+        j.jogador.col = c;
+
+        j.cenario[l][c] = 0;
       }
+      else if(valor == 3){
 
-    case 2:{
-      int temp[TAM][TAM] = {
-    {1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,1,0,0,0,5,1,1},
-    {1,0,1,0,1,0,1,0,0,0,1},
-    {1,0,1,0,0,0,1,0,1,0,1},
-    {1,1,1,1,6,1,1,0,1,0,1},
-    {1,0,0,0,0,0,0,0,1,0,1},
-    {1,1,1,0,1,1,1,0,1,0,1},
-    {1,0,0,0,1,0,0,0,0,0,1},
-    {1,0,1,0,1,0,1,1,1,0,1},
-    {1,0,4,0,0,0,0,0,0,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1}
-};
-
-      for(int l = 0; l < TAM; l++){
-        for(int c = 0; c < TAM; c++){
-          m[l][c] = temp[l][c]; //colocando o mapa "temporario" no do jogo
-        }
+        j.blocos[l][c] = 1;
+        j.cenario[l][c] = 0;
       }
+      else{
 
-      blocos[9][5] = 1;
-      blocos[5][6] = 1;
-
-      px = 9; //jogador no mapa 2
-      py = 1;
-      break;
+        j.cenario[l][c] = valor;
       }
+    }
+  }
 
-    case 3:{
-      int temp[TAM][TAM] = {
-    {1,1,1,1,1,1,1,1,1,1,1},
-{1,0,4,0,1,0,0,0,0,0,1},
-{1,1,1,0,1,0,1,1,1,0,1},
-{1,0,0,0,0,6,0,0,1,0,1},
-{1,0,1,1,1,1,1,0,1,0,1},
-{1,0,1,0,0,0,0,0,1,0,1},
-{1,0,1,0,7,1,1,1,1,0,1},
-{1,0,0,0,1,0,0,0,0,0,1},
-{1,1,1,0,1,0,1,1,1,1,1},
-{1,0,0,0,0,0,0,0,0,5,1},
-{1,1,1,1,1,1,1,1,1,1,1}
-};
+  j.numeroMapa = numeroMapa;
 
-      for(int l = 0; l < TAM; l++){ 
-        for(int c = 0; c < TAM; c++){
-          m[l][c] = temp[l][c]; //colocando o mapa "temporario" no do jogo
-        }
-      }
-
-      blocos[3][6] = 1;
-      blocos[4][6] = 1;
-      blocos[9][4] = 1;
-      blocos[9][8] = 1;
-
-      px = 1; // jogador no mapa 3
-      py = 1;
-      break;
-      }
-    }  
+  return true;
 }
 
 bool portaEstaFechada(int celula, int orientacao){
+  
   if (celula == 6){
-    if(orientacao == 0 or orientacao == 180){
+
+    if(orientacao == 0 || orientacao == 2){
       return true;
-    }else{
-      return false;
     }
-  }  
+
+    return false;
+  }
+    
   if (celula == 7){
-    if(orientacao == 90 or orientacao == 270){
+
+    if(orientacao == 1 || orientacao == 3){
       return true;
-    }else{
-      return false;
-    }
+    } 
+
+    return false;
   } 
+
   return false;
 }
 
@@ -181,86 +189,108 @@ bool daPraPassar(int celula, int orientacao){ //confere se os espaços da matriz
   return false;
 }
 
-void moverJogador(int m[][TAM], int blocos[][TAM], int &px, int &py, int orientacao, int &movimentos, char tecla){
-  int proxX = px;
-  int proxY = py;
+void moverJogador(jogo &j, char tecla){
+  int proxLin = j.jogador.lin;
+  int proxCol = j.jogador.col;
 
   switch (tecla){ //switch que faz o jogador poder se mover
 
     case 'w':
     case 'W': {
-      proxX = px - 1; 
+      proxLin = j.jogador.lin - 1; 
       break;
     }
     case 's':
     case 'S': {
-      proxX = px + 1;
+      proxLin = j.jogador.lin + 1;
       break;
     }
     case 'a':
     case 'A': {
-      proxY = py - 1;
+      proxCol = j.jogador.col - 1;
       break;
     }
     case 'd':
     case 'D': {
-      proxY = py + 1;
+      proxCol = j.jogador.col + 1;
       break;
     }
   }
-  if(blocos[proxX][proxY] == 0 && daPraPassar(m[proxX][proxY], orientacao)){
-    px = proxX; //atualiza as coordenadas
-    py = proxY; //atualiza as coordenadas
-    movimentos++; //soma um movimento 
+  if(j.blocos[proxLin][proxCol] == 0 && daPraPassar(j.cenario[proxLin][proxCol], j.orientacao)){
+    
+    j.jogador.lin = proxLin; //atualiza as coordenadas
+    j.jogador.col = proxCol; //atualiza as coordenadas
+
+    j.movimentos++; //soma um movimento 
     }
 }
 
-void girarMatriz(int m[][TAM], int blocos[][TAM], int &px, int &py, int &orientacao, int &rotacoes, char tecla){
-  int novoPx;
-  int novoPy;
+void girarMatriz(jogo &j, char tecla){
+  
+  int novaLin;
+  int novaCol;
+
   int aux[TAM][TAM];
   int auxBlocos[TAM][TAM];
   
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
-      if(tecla == 'e' or tecla == 'E'){
-        aux[c][TAM - 1 - l] = m[l][c]; //logica matematica utilizada para girar a matriz 
-        auxBlocos[c][TAM - 1 - l] = blocos[l][c];
+  for(int l = 0; l < j.n; l++){
+
+    for(int c = 0; c < j.n; c++){
+
+      if(tecla == 'e' || tecla == 'E'){
+        
+        aux[c][j.n - 1 - l] = j.cenario[l][c]; //logica matematica utilizada para girar a matriz 
+        auxBlocos[c][j.n - 1 - l] = j.blocos[l][c];
       }
+
       else if(tecla == 'q' or tecla == 'Q'){
-        aux[TAM - 1 - c][l] = m[l][c];
-        auxBlocos[TAM - 1 - c][l] = blocos[l][c];
+
+        aux[j.n - 1 - c][l] = j.cenario[l][c];
+        auxBlocos[j.n - 1 - c][l] = j.blocos[l][c];
       }
     }
   }
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
-      m[l][c] = aux[l][c]; //loop que atualiza a matriz do jogo após girar ela 
-      blocos[l][c] = auxBlocos[l][c];
+
+  for(int l = 0; l < j.n; l++){
+
+    for(int c = 0; c < j.n; c++){
+
+      j.cenario[l][c] = aux[l][c]; //loop que atualiza a matriz do jogo após girar ela 
+      j.blocos[l][c] = auxBlocos[l][c];
     }
   }
-  if(tecla == 'e' or tecla == 'E'){
-    novoPx = py; //atualiza a orientação em graus da matriz 
-    novoPy = TAM - 1 - px;
-    orientacao = (orientacao + 90) % 360;
+  if(tecla == 'e' || tecla == 'E'){
+
+    novaLin = j.jogador.col; //atualiza a orientação em graus da matriz 
+    novaCol = j.n - 1 - j.jogador.lin;
+
+    j.orientacao = (j.orientacao + 1) % 4;
   } 
-  else if(tecla == 'q' or tecla == 'Q'){
-    novoPx = TAM - 1 - py; //atualiza a orientação em graus da matriz
-    novoPy = px;
-    orientacao = (orientacao - 90 + 360) % 360;
-  }
-    px = novoPx;
-    py = novoPy;
-    rotacoes++; //aumenta a contagem de rotações
+  else if(tecla == 'q' || tecla == 'Q'){
+
+    novaLin = j.n - 1 - j.jogador.col; //atualiza a orientação em graus da matriz
+    novaCol = j.jogador.lin;
+
+    j.orientacao = (j.orientacao + 3) % 4;
   }
 
-void esmagamento(int m[][TAM], int blocos[][TAM], int orientacao){
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
+  j.jogador.lin = novaLin;
+  j.jogador.col - novaCol;
 
-      if(blocos[l][c] == 1){
-        if((m[l][c]==6 || m[l][c]==7) && portaEstaFechada(m[l][c], orientacao)){
-            blocos[l][c] = 0;
+  j.rotacoes++; //aumenta a contagem de rotações
+}
+
+void esmagamento(jogo &j){
+
+  for(int l = 0; l < j.n; l++){
+
+    for(int c = 0; c < j.n; c++){
+
+      if(j.blocos[l][c] == 1){
+
+        if((j.cenario[l][c]==6 || j.cenario[l][c]==7) && portaEstaFechada(j.cenario[l][c], j.orientacao)){
+          
+          j.blocos[l][c] = 0;
         }
       }
     }
@@ -276,129 +306,170 @@ bool sustentaBloco(int celula, int orientacao){
   return false;
 }
 
-void gravidade(int m[][TAM], int blocos[][TAM], int orientacao, int px, int py){
+bool aplicaGravidade(jogo &j){
 
-    for (int l= TAM-2; l>= 0; l--){
-        for (int c = 0; c < TAM; c++){
-            if(blocos[l][c] == 1){
+    for (int l= j.n - 2; l >= 0; l--){
+
+        for (int c = 0; c < j.n; c++){
+
+            if(j.blocos[l][c] == 1){
+
                 int linha = l;
 
-                while(linha + 1 < TAM && blocos[linha + 1][c] == 0 && !(linha + 1 == px && c == py) && sustentaBloco(m[linha + 1][c], orientacao) == false) {
-                    blocos[linha][c] = 0;
-                    blocos[linha + 1][c] = 1;
+                while(linha + 1 < j.n && j.blocos[linha + 1][c] == 0 && !sustentaBloco(j.cenario[linha + 1][c], j.orientacao)){
+
+                    j.blocos[linha][c] = 0;
+                    j.blocos[linha + 1][c] = 1;
 
                     linha ++;
+
+                    if (linha == j.jogador.lin && c == j.jogador.col){
+
+                      return true;
+                    }
                 }
             }
         }
     }
+
+    return false;
 }
 
-char jogadorAlavanca(int m[][TAM], int px, int py){
+char jogadorAlavanca(const jogo &j){
     
-    if(m[px][py] == 4){
+    if(j.cenario[j.jogador.lin][j.jogador.col] == 4){
         return 'T';
     }
+
     return '@';
 }
 
-void desenharCenario(int m[][TAM], int blocos[][TAM], int mapaAtual, int orientacao, int movimentos, int rotacoes, int px, int py){
+void desenharCenario(const jogo &j){
 
-  cout << "Mapa: " << mapaAtual << endl;
-  cout << "Orientação: " << orientacao << endl;
-  cout << "Movimentos: " << movimentos << endl;
-  cout << "Rotações: " << rotacoes << endl;
+  cout << "Mapa: " << j.numeroMapa << endl;
+  cout << "Titulo: " << j.titulo << endl;
 
-  for(int l = 0; l < TAM; l++){
-    for(int c = 0; c < TAM; c++){
+  cout << "Orientação: " << j.orientacao * 90 << "°" << endl;
+
+  cout << "Movimentos: " << j.movimentos << endl;
+  cout << "Rotações: " << j.rotacoes << endl;
+
+  for(int l = 0; l < j.n; l++){
+
+    for(int c = 0; c < j.n; c++){
         
-        if(l == px && c == py){
-            cout << jogadorAlavanca(m, px, py) << " ";
-        } else if(blocos[l][c] == 1){
+        if(l == j.jogador.lin && c == j.jogador.col){
+
+            cout << jogadorAlavanca(j) << " ";
+        }
+        
+        else if(j.blocos[l][c] == 1){
             cout << "O ";
-        } else{
-      switch (m[l][c]) {
-        case 0:
-          cout << "  ";
-          break;
-        case 1:
-          FundoAzul();
-          cout << "  ";
-          CorNormal();
-          break;
-        case 3:
-          cout << "O ";
-          break;
-        case 4:
-          cout << "A ";
-          break;
-        case 5:
-          cout << "S ";
-          break;
-        case 6:
-          if(portaEstaFechada(6, orientacao) == true){
-            cout << "= ";
-          }else{
+        } 
+        
+        else{
+
+          switch (j.cenario[l][c]){
+
+            case 0:
+              cout << "  ";
+              break;
+
+            case 1:
+              FundoAzul();
+              cout << "  ";
+              CorNormal();
+              break;
+
+            case 3:
+              cout << "O ";
+              break;
+
+            case 4:
+              cout << "A ";
+              break;
+
+          case 5:
+              cout << "S ";
+              break;
+
+          case 6:
+              if(portaEstaFechada(6, j.orientacao)){
+              cout << "= ";
+          }
+          else{
             cout << ": ";
           }
+
           break;
-        case 7:
-          if(portaEstaFechada(7, orientacao) == true){
-            cout << "| ";
-          }else{
-            cout << "; ";
-          }
-          break;
+
+          case 7:
+            if(portaEstaFechada(7, j.orientacao)){
+              cout << "| ";
+            }
+            else{
+              cout << "; ";
+            }
+
+            break;
+
           default:
             cout << "  ";
       }
      }
     }
+
     cout << endl;
   }
 }
 
-bool jogadorNaAlavanca(int m[][TAM], int px, int py) {
-    if (m[px][py] == 4) {
+bool jogadorNaAlavanca(const jogo &j){
+
+  return j.cenario[j.jogador.lin][j.jogador.col] == 4;
+}
+
+bool venceu(const jogo &j){
+
+    if(j.cenario[j.jogador.lin][j.jogador.col] == 5){
         return true;
     }
 
     return false;
 }
 
-bool venceu(int m[][TAM], int px, int py){
-    if(m[px][py] == 5){
-        return true;
-    }
-    return false;
-}
+bool jogadorEsmagado(const jogo &j){
 
-bool jogadorEsmagado(int m[][TAM], int px, int py, int orientacao) {
+  int celula = j.cenario[j.jogador.lin][j.jogador.col];
 
-    if ((m[px][py] == 7 || m[px][py] == 6) && portaEstaFechada(m[px][py], orientacao)){
+    if ((celula == 7 || celula == 6) && portaEstaFechada(celula, j.orientacao)){
+
             return true;
     }
 
     return false;
 }
 
-void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, int &orientacao, int &movimentos, int &rotacoes, bool &jogoSalvo) {
+void jogar(jogo &j, bool &jogoSalvo){
+
     char tecla;
 
     while(true) {
 
         cout << "\033c";
 
-        desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes, px, py);
+        desenharCenario(j);
 
         tecla = getch();
 
         if (tecla == 27) { // tecla ESC
+
           jogoSalvo = true;
           cout<<"\033c";
           break;
         }
+
         if (tecla == 'r' || tecla == 'R'){
+
             carregarMapa(numeroMapa, m, blocos, px, py);
             orientacao= 0;
             movimentos= 0;
@@ -409,45 +480,52 @@ void jogar(int m[][TAM], int blocos[][TAM], int numeroMapa, int &px, int &py, in
 
         if (tecla == 'W' || tecla == 'w' || tecla == 'A' || tecla == 'a' || tecla == 'S' || tecla == 's' || tecla == 'D' || tecla == 'd') {
 
-            moverJogador(m, blocos, px, py, orientacao, movimentos, tecla);
+            moverJogador(j, tecla);
 
-            if(venceu(m, px,py)){
-                jogoSalvo = false;
+            if(venceu(j)){
 
-                cout << "\033c";
+              jogoSalvo = false;
+
+              cout << "\033c";
                 
-                desenharCenario(m, blocos, numeroMapa, orientacao, movimentos, rotacoes, px, py);
+              desenharCenario(j);
 
-            cout << "\n====Você venceu!====\n";
+              cout << "\n====Você venceu!====\n";
 
-            getch();
-            break;
+              getch();
+
+              break;
            }
-        
-        } else if( tecla == 'q' || tecla == 'Q' || tecla == 'e' || tecla == 'E') {
+        } 
+        else if( tecla == 'q' || tecla == 'Q' || tecla == 'e' || tecla == 'E') {
             
-            if (jogadorNaAlavanca(m, px, py)) {
+            if (jogadorNaAlavanca(j)) {
                 
-                girarMatriz(m, blocos, px, py, orientacao, rotacoes, tecla);
+                girarMatriz(j, tecla);
 
-                if(jogadorEsmagado(m, px, py, orientacao)){
+                if(jogadorEsmagado(j)){
 
                     cout << "\033c";
+                    
                     cout << "==== Você foi esmagado pela porta! ====\n";
             
                     getch();
 
-                    carregarMapa(numeroMapa, m, blocos, px, py);
-                    orientacao = 0;
-                    movimentos = 0;
-                    rotacoes = 0;
-                    
                     continue;
                 }
 
-                esmagamento(m, blocos, orientacao);
+                esmagamento(j);
                 
-                gravidade(m, blocos, orientacao, px, py);
+                if(aplicaGravidade(j)){
+
+                  cout << "\033c";
+
+                  cout << "==== Você foi esmagado por um bloco! ====\n";
+
+                  getch();
+
+                  continue;
+                }
             }
         }
     }
